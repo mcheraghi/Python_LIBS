@@ -23,3 +23,6 @@ for a,b in europe.items():
     
 for x in np.nditer(x): # x is a nd array
 	print(x)
+
+	
+	test

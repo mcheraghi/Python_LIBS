@@ -1,6 +1,6 @@
 import numpy as np
 
-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
+
 #--------------------------------------------------------------------------
 my_house = np.array([18.0, 20.0, 10.75, 9.50])
 your_house = np.array([14.0, 24.0, 14.25, 9.0])
@@ -10,6 +10,7 @@ a = np.logical_or(my_house>18.5,my_house<10)
 
 # Both my_house and your_house smaller than 11
 b = np.logical_and(my_house>18.5,my_house<10)
+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 
 
 
 

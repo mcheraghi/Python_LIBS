@@ -634,9 +634,41 @@ print (gdp_returns.corr())
 
 
 
+#-----------------------------------------------------------------------------------------Select by Query
 
-#----------------------------------------------------------------------------------------semi join
-# Merge classic_18_19 with pop_18_19
-classic_pop = classic_18_19.merge(pop_18_19, on = 'tid')
+social_fin.query('value<0 and financial == "net_income"')
+# Merge gdp and pop on date and country with fill
+gdp_pop = pd.merge_ordered(gdp, pop, on=['country','date'], fill_method='ffill')
+
+# Add a column named gdp_per_capita to gdp_pop that divides the gdp by pop
+gdp_pop['gdp_per_capita'] = gdp_pop['gdp'] / gdp_pop['pop']
+
+# Pivot data so gdp_per_capita, where index is date and columns is country
+gdp_pivot = gdp_pop.pivot_table('gdp_per_capita', 'date', 'country')
+
+# Select dates equal to or greater than 1991-01-01
+recent_gdp_pop = gdp_pivot.query('date>= "1991-01-01"')
+
+# Plot recent_gdp_pop
+recent_gdp_pop.plot(rot=90)
+plt.show()
+
+
+
+
+#-----------------------------------------------------------------------------------------melt
+# unpivot everything besides the year column
+ur_tall = ur_wide.melt(id_vars = ['year'], var_name='month', value_name='unempl_rate')
+
+
+# Create a date column using the month and year columns of ur_tall
+ur_tall['date'] = pd.to_datetime(ur_tall['year'] + '-' + ur_tall['month'])
+
+# Sort ur_tall by date in ascending order
+ur_sorted = ur_tall.sort_values(by = 'date')
+
+# Plot the unempl_rate by date
+ur_sorted.plot(x = 'date',y = 'unempl_rate' )
+plt.show()
 
 

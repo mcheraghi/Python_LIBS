@@ -19,3 +19,27 @@ plt.show()
 
 #------------------------------------------------------------------------------------
 fig, ax = plt.subplots(m,n)   #m rows and n columns, ax is an array of shape (m,n)
+
+
+#------------------------------------------------------------------------------------
+import pandas as pd
+
+# Read the data from file using read_csv
+climate_change0 = pd.read_csv('climate_change.csv', parse_dates = True, index_col = 'date')
+fig, ax = plt.subplots()
+
+climate_change = climate_change0["1970-01-01":"1979-12-31"]
+# Add the time-series for "relative_temp" to the plot
+ax.plot(climate_change.index,climate_change["relative_temp"])
+
+# Set the x-axis label
+ax.set_xlabel('Time')
+
+# Set the y-axis label
+ax.set_ylabel('Relative temperature (Celsius)')
+
+# Show the figure
+plt.show()
+
+
+#------------------------------------------------------------------------------------

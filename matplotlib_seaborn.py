@@ -15,3 +15,7 @@ ax.set_title("Weather patterns in Austin and Seattle")
 
 # Display the figure
 plt.show()
+
+
+#------------------------------------------------------------------------------------
+fig, ax = plt.subplots(m,n)   #m rows and n columns, ax is an array of shape (m,n)

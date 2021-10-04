@@ -318,6 +318,43 @@ df['fmr_2'].plot.hist()
 
 
 
+#----------------------------------------------------------------------------catplot(), caout, bar, ... , categorical plot
+
+sns.catplot(x="Internet usage", data=survey_data,kind = 'count')
+
+sns.catplot(y="Internet usage", data=survey_data,col= "Age Category", kind="count")#plots based on the "Age Category" variable
+
+sns.catplot(x="Gender",y="Interested in Math" ,kind = 'bar',data=survey_data)
+
+# List of categories from lowest to highest
+category_order = ["<2 hours", 
+                  "2 to 5 hours", 
+                  "5 to 10 hours", 
+                  ">10 hours"]
+
+# Rearrange the categories
+sns.catplot(x="study_time", y="G3",data=student_data, kind="bar", order=category_order)
+
+sns.catplot(x="study_time", y="G3",data=student_data,kind="bar",order=category_order,ci=None)
+
+
+#----------------box plot
+study_time_order = ["<2 hours", "2 to 5 hours", 
+                    "5 to 10 hours", ">10 hours"]
+
+# Create a box plot and set the order of the categories
+sns.catplot(x ="study_time", y = "G3", data=student_data,kind='box',order=study_time_order)
+
+
+
+# Create a box plot with subgroups and omit the outliers
+sns.catplot(x = "internet",y ="G3" ,kind='box',sym='',hue="location",data=student_data)
+
+
+
+
+
+
 #------------------------
 # Set the style to white
 sns.set_style('white')
@@ -430,4 +467,5 @@ sns.boxplot(data=df,
 plt.show()
 
 #------------------------------------------------boxplot()
+
 

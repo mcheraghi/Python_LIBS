@@ -671,4 +671,5 @@ ur_sorted = ur_tall.sort_values(by = 'date')
 ur_sorted.plot(x = 'date',y = 'unempl_rate' )
 plt.show()
 
-
+#-----------------------------------------------------------------------------------------nlargest function: very useful
+users_last_10 = set(joined_pr.nlargest(10,'date')['user'])

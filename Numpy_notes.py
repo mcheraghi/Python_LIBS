@@ -10,7 +10,7 @@ a = np.logical_or(my_house>18.5,my_house<10)
 
 # Both my_house and your_house smaller than 11
 b = np.logical_and(my_house>18.5,my_house<10)
-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 
+ 
 
 
 

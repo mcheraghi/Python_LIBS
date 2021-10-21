@@ -376,3 +376,263 @@ print("Tuned ElasticNet l1 ratio: {}".format(gm_cv.best_params_))
 print("Tuned ElasticNet R squared: {}".format(r2))
 print("Tuned ElasticNet MSE: {}".format(mse))
 
+
+
+
+#----------------------------------------------------------------------------------Preprocessing
+# Import pandas
+import pandas as pd
+# Read 'gapminder.csv' into a DataFrame: df
+df = pd.read_csv('gapminder.csv')
+print(df.head())
+# Create a boxplot of life expectancy per region
+df.boxplot('life',by='Region', rot=60)
+# Create dummy variables: df_region
+df_region = pd.get_dummies(df)
+
+# Print the columns of df_region
+print(df_region.columns)
+
+# Create dummy variables with drop_first=True: df_region
+df_region = pd.get_dummies(df,drop_first=True)
+
+# Print the new columns of df_region
+print(df_region.columns)
+
+#X and y are defined
+# Instantiate a ridge regressor: ridge
+ridge = Ridge(alpha=0.5,normalize=True)
+
+# Perform 5-fold cross-validation: ridge_cv
+ridge_cv = cross_val_score(ridge,X,y,cv=5)
+
+# Print the cross-validated scores
+print(ridge_cv)
+
+
+
+
+#--------------------------------------------------------------
+# Convert '?' to NaN
+df[df == '?'] = np.nan
+
+# Print the number of NaNs
+print(df.isnull().sum())
+
+# Print shape of original DataFrame
+print("Shape of Original DataFrame: {}".format(df.shape))
+
+# Drop missing values and print shape of new DataFrame
+df = df.dropna()
+
+# Print shape of new DataFrame
+print("Shape of DataFrame After Dropping All Rows with Missing Values: {}".format(df.shape))
+
+
+
+#-------------------------------------------------------------- imputation and pipline, SVM
+
+# Import the Imputer module
+from sklearn.preprocessing import Imputer
+from sklearn.svm import SVC
+
+# Setup the Imputation transformer: imp
+imp = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
+
+# Instantiate the SVC classifier: clf
+clf = SVC()
+
+# Setup the pipeline with the required steps: steps
+steps = [('imputation', imp),('SVM', clf)]
+
+# Create the pipeline: pipeline
+pipeline = Pipeline(steps)
+
+# Create training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=42)
+
+# Fit the pipeline to the train set
+pipeline.fit(X_train,y_train)
+
+# Predict the labels of the test set
+y_pred = pipeline.predict(X_test)
+
+# Compute metrics
+print(classification_report(y_test,y_pred))
+
+
+#-------------------------------------------------------------- normalize features
+
+# Import scale
+from sklearn.preprocessing import scale
+
+# Scale the features: X_scaled
+X_scaled = scale(X)
+
+# Print the mean and standard deviation of the unscaled features
+print("Mean of Unscaled Features: {}".format(np.mean(X))) 
+print("Standard Deviation of Unscaled Features: {}".format(np.std(X)))
+
+# Print the mean and standard deviation of the scaled features
+print("Mean of Scaled Features: {}".format(np.mean(X_scaled))) 
+print("Standard Deviation of Scaled Features: {}".format(np.std(X_scaled)))
+
+
+#------------------------------------------------------------------------------
+# Import the necessary modules
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+# Setup the pipeline steps: steps
+steps = [('scaler', StandardScaler()),
+        ('knn',KNeighborsClassifier() )]
+        
+# Create the pipeline: pipeline
+pipeline = Pipeline(steps)
+
+# Create train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=42)
+
+# Fit the pipeline to the training set: knn_scaled
+knn_scaled = pipeline.fit(X_train,y_train)
+
+# Instantiate and fit a k-NN classifier to the unscaled data
+knn_unscaled = KNeighborsClassifier().fit(X_train, y_train)
+
+# Compute and print metrics
+print('Accuracy with Scaling: {}'.format(knn_scaled.score(X_test,y_test)))
+print('Accuracy without Scaling: {}'.format(knn_unscaled.score(X_test,y_test)))
+
+
+#------------------------------------------------------------------------------
+# Setup the pipeline
+steps = [('scaler', StandardScaler()),
+         ('SVM', SVC())]
+
+pipeline = Pipeline(steps)
+
+# Specify the hyperparameter space
+parameters = {'SVM__C':[1, 10, 100],
+              'SVM__gamma':[0.1, 0.01]}
+
+# Create train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=21)
+
+# Instantiate the GridSearchCV object: cv
+cv = GridSearchCV(pipeline,parameters,cv=5)
+
+# Fit to the training set
+cv.fit(X_train,y_train)
+
+# Predict the labels of the test set: y_pred
+y_pred = cv.predict(X_test)
+
+# Compute and print metrics
+print("Accuracy: {}".format(cv.score(X_test, y_test)))
+print(classification_report(y_test, y_pred))
+print("Tuned Model Parameters: {}".format(cv.best_params_))
+
+
+
+#------------------------------------------------------------------------------alltogether
+
+# Setup the pipeline steps: steps
+steps = [('imputation', Imputer(missing_values='NaN', strategy='mean', axis=0)),
+         ('scaler', StandardScaler()),
+         ('elasticnet', ElasticNet())]
+
+# Create the pipeline: pipeline 
+pipeline = Pipeline(steps)
+
+# Specify the hyperparameter space
+parameters = {'elasticnet__l1_ratio':np.linspace(0,1,30)}
+
+# Create train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.4,random_state=42)
+
+# Create the GridSearchCV object: gm_cv
+gm_cv = GridSearchCV(pipeline,parameters,cv=3)
+
+# Fit to the training set
+gm_cv.fit(X_train,y_train)
+
+# Compute and print the metrics
+r2 = gm_cv.score(X_test, y_test)
+print("Tuned ElasticNet Alpha: {}".format(gm_cv.best_params_))
+print("Tuned ElasticNet R squared: {}".format(r2))
+
+
+
+
+#---------------------------------------------------------------------------------------------Unsupervised
+# Import KMeans
+from sklearn.cluster import KMeans
+
+# Create a KMeans instance with 3 clusters: model
+model = KMeans(n_clusters=3)
+
+# Fit model to points
+model.fit(points)
+
+# Determine the cluster labels of new_points: labels
+labels = model.predict(new_points)
+
+# Print cluster labels of new_points
+print(labels)
+# Assign the columns of new_points: xs and ys
+xs = new_points[:,0]
+ys = new_points[:,1]
+
+# Make a scatter plot of xs and ys, using labels to define the colors
+plt.scatter(xs,ys,c=labels,alpha=0.5)
+
+# Assign the cluster centers: centroids
+centroids = model.cluster_centers_
+
+# Assign the columns of centroids: centroids_x, centroids_y
+centroids_x = centroids[:,0]
+centroids_y = centroids[:,1]
+
+# Make a scatter plot of centroids_x and centroids_y
+plt.scatter(centroids_x,centroids_y,marker='D',s=50)
+plt.show()
+
+
+#---------------------------------Elbow law
+ks = range(1, 6)
+inertias = []
+
+for k in ks:
+    # Create a KMeans instance with k clusters: model
+    model = KMeans(n_clusters=k)
+    
+    # Fit model to samples
+    model.fit(samples)
+    
+    # Append the inertia to the list of inertias
+    inertias.append(model.inertia_)
+    
+# Plot ks vs inertias
+plt.plot(ks, inertias, '-o')
+plt.xlabel('number of clusters, k')
+plt.ylabel('inertia')
+plt.xticks(ks)
+plt.show()
+
+
+#---------------------------------Using pd.crosstab()
+
+# Create a KMeans model with 3 clusters: model
+model = KMeans(n_clusters=3)
+
+# Use fit_predict to fit model and obtain cluster labels: labels
+labels = model.fit_predict(samples)
+
+# Create a DataFrame with labels and varieties as columns: df
+df = pd.DataFrame({'labels': labels, 'varieties': varieties})
+
+# Create crosstab: ct
+ct = pd.crosstab(df['labels'],df['varieties'])
+
+# Display ct
+print(ct)
